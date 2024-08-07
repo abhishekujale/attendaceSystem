@@ -146,7 +146,7 @@ router.put('/:adminId', authenticatejwt, async (req: Request, res: Response) => 
             })
             return res.status(400).send({ errors, success: false });
         }
-        const adminId = req.params.accountId.split(':')[1]
+        const adminId = req.params.adminId.split(':')[1]
         
         const admin = await prisma.admin.findUnique({
             where:{ 
@@ -188,7 +188,7 @@ router.put('/:adminId', authenticatejwt, async (req: Request, res: Response) => 
 router.delete('/:adminId', authenticatejwt, async (req: Request, res: Response) => {
     try {
         
-        const adminId = req.params.accountId.split(':')[1]
+        const adminId = req.params.adminId
         
         const deletedAccount = await prisma.admin.delete({
             where:{

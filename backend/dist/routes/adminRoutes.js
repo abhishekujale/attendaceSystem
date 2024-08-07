@@ -133,7 +133,7 @@ router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
             });
             return res.status(400).send({ errors, success: false });
         }
-        const adminId = req.params.accountId.split(':')[1];
+        const adminId = req.params.adminId.split(':')[1];
         const admin = yield dbconfig_1.prisma.admin.findUnique({
             where: {
                 email: req.body.email
@@ -169,7 +169,7 @@ router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
 }));
 router.delete('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const adminId = req.params.accountId.split(':')[1];
+        const adminId = req.params.adminId;
         const deletedAccount = yield dbconfig_1.prisma.admin.delete({
             where: {
                 id: Number(adminId)
