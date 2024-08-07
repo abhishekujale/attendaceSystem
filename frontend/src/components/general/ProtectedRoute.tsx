@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import adminAtom from '../../store/adminAtom';
@@ -38,7 +38,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   };
 
   useEffect(() => {
-    getAdminData();
+    if(!admin.id)getAdminData();
   }, []);
 
   if (isLoading) {
@@ -48,7 +48,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!!admin.id) {
     return <div>{children}</div>;
   } else {
-    return <Navigate to='/signin' />;
+    return <div>Unautharized</div>;
   }
 };
 

@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const adminRoutes_1 = require("./routes/adminRoutes");
+const createAdmin_1 = require("./utils/createAdmin");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 7000;
@@ -21,6 +22,7 @@ app.use("/api/admin", adminRoutes_1.router);
 app.get('/', (req, res) => {
     res.json("server is running");
 });
+(0, createAdmin_1.createAdmin)();
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

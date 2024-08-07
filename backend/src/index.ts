@@ -2,8 +2,8 @@ import express from 'express';
 import cors, { CorsOptions } from 'cors'; 
 import dotenv from 'dotenv';
 import {router as adminRouter} from "./routes/adminRoutes"
+import { createAdmin } from './utils/createAdmin';
 dotenv.config();
-
 
 const app = express();
 const port = process.env.PORT || 7000;
@@ -20,6 +20,8 @@ app.use("/api/admin",adminRouter)
 app.get('/',(req,res)=>{
     res.json("server is running")
 })
+createAdmin()
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
