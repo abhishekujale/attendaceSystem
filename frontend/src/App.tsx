@@ -8,6 +8,7 @@ import ProtectedRoute from './components/general/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Layout from './layout/Layout';
 import Admins from './pages/Admins';
+import Events from './pages/Events';
 
 
 function App() {
@@ -33,6 +34,15 @@ function App() {
                 element={<ProtectedRoute>
                             <Layout>
                               <Admins/>
+                            </Layout>
+                          </ProtectedRoute>}
+            >
+            </Route>
+            <Route 
+                path="/events" 
+                element={<ProtectedRoute>
+                            <Layout>
+                              <Events />
                             </Layout>
                           </ProtectedRoute>}
             >
