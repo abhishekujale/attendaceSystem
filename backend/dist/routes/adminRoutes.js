@@ -125,7 +125,7 @@ router.get('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0
 }));
 router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { error } = (0, authMiddleware_1.loginValidate)(req.body);
+        const { error } = (0, authMiddleware_1.updateValidate)(req.body);
         if (error) {
             const errors = {};
             error.forEach((err) => {
@@ -134,29 +134,42 @@ router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
             return res.status(400).send({ errors, success: false });
         }
         const adminId = req.params.adminId.split(':')[1];
-        const admin = yield dbconfig_1.prisma.admin.findUnique({
-            where: {
-                email: req.body.email
+        console.log(adminId);
+        const adminIdNumber = Number(adminId);
+        if (isNaN(adminIdNumber)) {
+            return res.status(400).send({ message: "Invalid admin ID", success: false });
+        }
+        const { email, password } = req.body;
+        if (email && email.trim() !== '') {
+            const existingAdmin = yield dbconfig_1.prisma.admin.findUnique({
+                where: {
+                    email
+                }
+            });
+            if (existingAdmin) {
+                return res.status(409).send({ errors: { email: 'Admin with given email already exists' }, success: false });
             }
-        });
-        if (admin)
-            return res.status(409).send({ errors: { name: 'Admin with given email already exists' }, success: false });
-        const salt = yield bcrypt_1.default.genSalt(Number(process.env.SALT));
-        const hashedPassword = yield bcrypt_1.default.hash(req.body.password, salt);
-        const newAdmin = yield dbconfig_1.prisma.admin.update({
+        }
+        let hashedPassword;
+        if (password && password.trim() !== '') {
+            const salt = yield bcrypt_1.default.genSalt(Number(process.env.SALT));
+            hashedPassword = yield bcrypt_1.default.hash(password, salt);
+        }
+        const updateData = {};
+        if (email && email.trim() !== '')
+            updateData.email = email;
+        if (password && password.trim() !== '')
+            updateData.password = hashedPassword;
+        const updatedAdmin = yield dbconfig_1.prisma.admin.update({
             where: {
-                id: Number(adminId)
+                id: adminIdNumber
             },
-            data: {
-                email: req.body,
-                password: hashedPassword,
-                role: 'admin',
-            },
+            data: updateData
         });
         return res.status(201).send({
             data: {
-                id: newAdmin.id,
-                email: newAdmin.email
+                id: updatedAdmin.id,
+                email: updatedAdmin.email
             },
             message: "Account updated successfully",
             success: true

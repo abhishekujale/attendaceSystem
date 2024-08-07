@@ -46,7 +46,10 @@ const NewAdminSheet = () => {
             });
 
             if (response?.data.success) {
-                
+                setValues({
+                    email:'',
+                    password:''
+                })
                 setAdmins((prev)=>([...prev,response.data.data]))
                 onClose()
                 toast.success(response?.data.message);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { authenticatejwt, generateAuthToken, loginValidate } from '../middleware/authMiddleware';
+import { authenticatejwt, generateAuthToken, loginValidate, updateValidate } from '../middleware/authMiddleware';
 import { prisma } from '../config/dbconfig';
 
 const router = require('express').Router();
@@ -60,7 +60,6 @@ router.get('/me', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-
 router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
         const { error } = loginValidate(req.body);
@@ -109,10 +108,8 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-
 router.get('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
-        
         const adminData = await prisma.admin.findMany({
             select: {
                 id:true,
@@ -131,52 +128,66 @@ router.get('/', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-
 router.put('/:adminId', authenticatejwt, async (req: Request, res: Response) => {
     try {
-        const { error } = loginValidate(req.body);
-        
+    
+        const { error } = updateValidate(req.body);
+
         if (error) {
-            const errors:Record<string,string>= {}
-            error.forEach((err:{
-                path:string[],
-                message:string
-            })=>{
-                errors[err.path[0]]=err.message
-            })
+            const errors: Record<string, string> = {};
+            error.forEach((err: { path: string[]; message: string }) => {
+                errors[err.path[0]] = err.message;
+            });
             return res.status(400).send({ errors, success: false });
         }
-        const adminId = req.params.adminId.split(':')[1]
+
+        const adminId = req.params.adminId.split(':')[1];
         
-        const admin = await prisma.admin.findUnique({
-            where:{ 
-                email: req.body.email
+        const adminIdNumber = Number(adminId);
+
+        if (isNaN(adminIdNumber)) {
+            return res.status(400).send({ message: "Invalid admin ID", success: false });
+        }
+
+        const { email, password } = req.body;
+
+        if (email && email.trim() !== '') {
+            const existingAdmin = await prisma.admin.findUnique({
+                where: {
+                    email
+                }
+            });
+
+            if (existingAdmin) {
+                return res.status(409).send({ errors: { email: 'Admin with given email already exists' }, success: false });
             }
-        })
+        }
 
-        if(admin)return res.status(409).send({ errors: { name: 'Admin with given email already exists' }, success: false });
-        
-        const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        let hashedPassword;
+        if (password && password.trim() !== '') {
+            const salt = await bcrypt.genSalt(Number(process.env.SALT));
+            hashedPassword = await bcrypt.hash(password, salt);
+        }
 
-        const newAdmin = await prisma.admin.update({
-            where:{
-                id:Number(adminId)
+        const updateData: { email?: string; password?: string } = {};
+
+        if (email && email.trim() !== '') updateData.email = email;
+        if (password && password.trim() !== '') updateData.password = hashedPassword;
+
+        const updatedAdmin = await prisma.admin.update({
+            where: {
+                id: adminIdNumber
             },
-            data: {
-                email: req.body,
-                password: hashedPassword,
-                role: 'admin',
-            },
+            data: updateData
         });
 
-        return res.status(201).send({ 
+        return res.status(201).send({
             data: {
-                id: newAdmin.id, 
-                email: newAdmin.email 
-            }, 
-            message: "Account updated successfully", 
-            success: true 
+                id: updatedAdmin.id,
+                email: updatedAdmin.email
+            },
+            message: "Account updated successfully",
+            success: true
         });
 
     } catch (err) {
@@ -187,7 +198,6 @@ router.put('/:adminId', authenticatejwt, async (req: Request, res: Response) => 
 
 router.delete('/:adminId', authenticatejwt, async (req: Request, res: Response) => {
     try {
-        
         const adminId = req.params.adminId
         
         const deletedAccount = await prisma.admin.delete({
@@ -212,7 +222,6 @@ router.delete('/:adminId', authenticatejwt, async (req: Request, res: Response) 
 
 router.post('/bulkdelete', authenticatejwt, async (req: Request, res: Response) => {
     try {
-
         const adminIds = req.body.Ids.map((id:string)=>Number(id)); 
 
         await prisma.admin.deleteMany({

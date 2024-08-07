@@ -48,3 +48,35 @@ export const loginValidate = (data: any) => {
       return { error: e.errors };
     }
   };
+
+  export const updateValidate = (data: any) => {
+    const schema = z.object({
+      email: z
+        .string()
+        .transform((val) => val === '' ? undefined : val)
+        .refine(val => val === undefined || z.string().email().safeParse(val).success, {
+          message: 'Please enter a valid email address',
+        })
+        .optional(),
+      password: z
+        .string()
+        .transform((val) => val === '' ? undefined : val)
+        .optional()
+        .refine(val => !val || passwordComplexity.safeParse(val).success, {
+          message: 'Password must meet complexity requirements',
+        }),
+    }).refine((data) => data.email || data.password, {
+      message: 'Either email or password must be provided',
+      path: ['email', 'password'],
+    }).refine((data) => !(data.email && data.password), {
+      message: 'You cannot update both email and password at the same time',
+      path: ['email', 'password'],
+    });
+  
+    try {
+      schema.parse(data);
+      return { error: null };
+    } catch (e: any) {
+      return { error: e.errors };
+    }
+  };
