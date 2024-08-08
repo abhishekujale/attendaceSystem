@@ -8,7 +8,7 @@ import { toast } from "react-toastify"
 import eventsAtom from "@/store/eventsAtom"
 
 export type NewEventErrorMessages ={
-    company?:string,
+    compony?:string,
     date?:string,
     round?:string;
     [key: string]: string | undefined;
@@ -18,7 +18,7 @@ const NewEventSheet = () => {
     const [isOpen,setIsOpen] = useRecoilState(newEventSheet)
     const onClose = () => setIsOpen(false)
     const [values,setValues] = useState({
-        company:'',
+        compony:'',
         date:new Date(Date.now()),
         round:'',
     })
@@ -36,32 +36,32 @@ const NewEventSheet = () => {
             setErrors({}); // Clear previous errors
             
             console.log('Compressed data:', data);
-            // Instead of sending to the backend, just console.log the data for now
+            //Instead of sending to the backend, just console.log the data for now
 
-            // const token = localStorage.getItem("authToken");
-            // if (!token) {
-            //     toast.error("No token found");
-            //     return;
-            // }
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                toast.error("No token found");
+                return;
+            }
 
-            // const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/`, values, {
-            //     headers: {
-            //         Authorization: `Bearer ${token}`
-            //     }
-            // });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/`, values, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
-            // if (response?.data.success) {
-            //     setValues({
-            //         company:'',
-            //         date:new Date(Date.now()),
-            //         round:'',
-            //     })
-            //     setEvents((prev)=>([...prev,response.data.data]))
-            //     onClose()
-            //     toast.success(response?.data.message);
-            // } else {
-            //   toast.error(response?.data.message);
-            // }
+            if (response?.data.success) {
+                setValues({
+                    compony:'',
+                    date:new Date(Date.now()),
+                    round:'',
+                })
+                setEvents((prev)=>([...prev,response.data.data]))
+                onClose()
+                toast.success(response?.data.message);
+            } else {
+              toast.error(response?.data.message);
+            }
         } catch (err: any) {
             if (err.response?.data?.errors) {
                 setErrors(err.response.data.errors);

@@ -1,8 +1,16 @@
 import { Request, Response } from 'express';
 import { authenticatejwt } from '../middleware/authMiddleware';
 import { prisma } from '../config/dbconfig';
+import { z } from 'zod';
 
 const router = require('express').Router();
+
+// Validation schema for event input
+const eventSchema = z.object({
+    compony: z.string().min(1, 'Company name is required'),
+    date: z.string().min(1, 'Date is required'),
+    round: z.string().min(1, 'Round name is required'),
+});
 
 // Get all events
 router.get('/', authenticatejwt, async (req: Request, res: Response) => {
@@ -21,12 +29,12 @@ router.get('/', authenticatejwt, async (req: Request, res: Response) => {
 // Create a new event
 router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
-        const { compony, date, round } = req.body;
+        const eventData = eventSchema.parse(req.body);
         const newEvent = await prisma.event.create({
             data: {
-                compony,
-                date,
-                round
+                compony: eventData.compony,
+                date: new Date(eventData.date).toISOString(),
+                round: eventData.round,
             }
         });
         return res.status(201).send({
@@ -35,6 +43,16 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
             message: "Event created successfully"
         });
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            const validationErrors: Record<string, string[]> = {};
+            for (const issue of error.issues) {
+                if (!validationErrors[issue.path[0]]) {
+                    validationErrors[issue.path[0]] = [];
+                }
+                validationErrors[issue.path[0]].push(issue.message);
+            }
+            return res.status(400).send({ success: false, message: "Validation error", error: validationErrors });
+        }
         console.error(error);
         return res.status(500).send({ success: false, message: "Internal server error", error });
     }
@@ -61,4 +79,4 @@ router.delete('/:id', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-export { router as eventsRouter };
+export { router };
