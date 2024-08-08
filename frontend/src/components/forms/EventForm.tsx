@@ -2,12 +2,12 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { NewEventErrorMessages } from "../sheets/NewEventSheet";
-import { Plus, Save, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import * as XLSX from 'xlsx';
 import pako from 'pako';
 
 export type EventFormInput = {
-  company: string,
+  compony: string,
   date: Date,
   round: string
 }
@@ -15,7 +15,7 @@ export type EventFormInput = {
 type EventFormProps = {
   id?: string,
   values: {
-    company: string,
+    compony: string,
     date: Date,
     round: string
   },
@@ -47,9 +47,6 @@ const EventForm = ({
   errors,
   setValues
 }: EventFormProps) => {
-  const compressData = (data: string): Uint8Array => {
-    return pako.gzip(data);
-  };
   
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -86,18 +83,18 @@ const EventForm = ({
     <div>
       <div className="mt-8 grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="company">Company</Label>
+          <Label htmlFor="compony">Compony</Label>
           <Input 
-            id="company" 
+            id="compony" 
             type="text" 
-            placeholder="Company name" 
-            value={values.company}
-            onChange={(e) => setValues({ company: e.target.value })}
+            placeholder="Compony name" 
+            value={values.compony}
+            onChange={(e) => setValues({ compony: e.target.value })}
             disabled={disabled}
           />
-          {errors.company && <div className="ml-2">
+          {errors.compony && <div className="ml-2">
             <p className="text-sm text-red-400">
-              {errors.company}
+              {errors.compony}
             </p>
           </div>}
         </div>
@@ -140,9 +137,7 @@ const EventForm = ({
             disabled={disabled}
           >
             {!id && <Plus className="mr-2" />}
-            {!!id && <Save className="mr-2" />}
             {!id && 'Create Event'}
-            {!!id && 'Save Changes'}
           </Button>
           
           <div className="grid gap-2">

@@ -2,9 +2,11 @@ import express from 'express';
 import compression from 'compression';
 import cors, { CorsOptions } from 'cors'; 
 import dotenv from 'dotenv';
-import {router as adminRouter} from "./routes/adminRoutes"
-import { router as userRouter } from "./routes/userRoutes"
+import { router as adminRouter } from "./routes/adminRoutes";
+import { router as userRouter } from "./routes/userRoutes";
+import { router as eventRouter } from "./routes/eventRoutes";
 import { createAdmin } from './utils/createAdmin';
+
 dotenv.config();
 
 const app = express();
@@ -18,14 +20,14 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use("/api/admin",adminRouter)
-app.use("/api/user", userRouter)
-app.get('/',(req,res)=>{
-    res.json("server is running")
-})
+app.use("/api/admin", adminRouter);
+app.use("/api/user", userRouter);  // Keep userRouter
+app.use("/api/event", eventRouter); // Keep eventRouter
+app.get('/', (req, res) => {
+  res.json("server is running");
+});
 app.use(compression());
-createAdmin()
-
+createAdmin();
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
