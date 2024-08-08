@@ -8,6 +8,7 @@ const compression_1 = __importDefault(require("compression"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const adminRoutes_1 = require("./routes/adminRoutes");
+const userRoutes_1 = require("./routes/userRoutes");
 const createAdmin_1 = require("./utils/createAdmin");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -20,6 +21,7 @@ const corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use("/api/admin", adminRoutes_1.router);
+app.use("/api/user", userRoutes_1.router);
 app.get('/', (req, res) => {
     res.json("server is running");
 });

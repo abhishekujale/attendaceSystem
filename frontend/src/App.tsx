@@ -9,6 +9,9 @@ import Dashboard from './pages/Dashboard';
 import Layout from './layout/Layout';
 import Admins from './pages/Admins';
 import Events from './pages/Events';
+import SignupUser from './pages/SignupUser';
+import SigninUser from './pages/SigninUser';
+
 
 
 function App() {
@@ -44,6 +47,20 @@ function App() {
                             <Layout>
                               <Events />
                             </Layout>
+                          </ProtectedRoute>}
+            >
+            </Route>
+            <Route 
+                path="/signupuser" 
+                element={<ProtectedRoute>
+                              <SignupUser />
+                          </ProtectedRoute>}
+            >
+            </Route>
+            <Route 
+                path="/signinuser" 
+                element={<ProtectedRoute>
+                              <SigninUser />
                           </ProtectedRoute>}
             >
             </Route>
