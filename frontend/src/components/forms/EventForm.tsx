@@ -1,31 +1,44 @@
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { NewAdminErrorMessages } from "../sheets/NewAdminSheet";
+import { NewEventErrorMessages } from "../sheets/NewEventSheet";
 import { Plus, Save, Trash } from "lucide-react";
+import * as XLSX from 'xlsx';
+import pako from 'pako';
 
-export type AdminFormInput ={
-  company:string,
-  date:string,
-  round:string
+export type EventFormInput = {
+  company: string,
+  date: Date,
+  round: string
 }
 
-type AdminFormProps = {
-  id?:string,
-  values:
-  {
-    company:string,
-    date:string,
-    round:string
+type EventFormProps = {
+  id?: string,
+  values: {
+    company: string,
+    date: Date,
+    round: string
   },
-  onSubmit:()=>void,
-  onDelete:()=>void,
-  disabled?:boolean,
-  errors:NewAdminErrorMessages,
-  setValues:(value:Partial<AdminFormInput>)=>void
+  onSubmit: (data: any) => void,
+  onDelete: () => void,
+  disabled?: boolean,
+  errors: NewEventErrorMessages,
+  setValues: (value: Partial<EventFormInput>) => void
 }
 
-const AdminForm = ({
+const formatDate = (date: Date): string => {
+  let d = new Date(date);
+  let month = '' + (d.getMonth() + 1);
+  let day = '' + d.getDate();
+  let year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+};
+
+const EventForm = ({
   id,
   values,
   onDelete,
@@ -33,7 +46,41 @@ const AdminForm = ({
   disabled,
   errors,
   setValues
-}:AdminFormProps) => {
+}: EventFormProps) => {
+  const compressData = (data: string): Uint8Array => {
+    return pako.gzip(data);
+  };
+  
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      const arrayBuffer = await file.arrayBuffer();
+      const binaryString = new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+  
+      try {
+        const workbook = XLSX.read(binaryString, { type: 'binary' });
+        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        const jsonString = JSON.stringify(jsonData);
+  
+        // Calculate size of original data
+        const originalBlob = new Blob([jsonString], { type: 'application/json' });
+        console.log('Original data size:', originalBlob.size, 'bytes');
+  
+        // Compress the JSON data
+        const compressedData = pako.gzip(jsonString);
+  
+        // Calculate size of compressed data
+        const compressedBlob = new Blob([compressedData]);
+        console.log('Compressed data size:', compressedBlob.size, 'bytes');
+  
+        // Handle the compressed data as needed
+        // onSubmit(compressedData);
+      } catch (error) {
+        console.error('Error processing file:', error);
+        // toast.error("Error processing the file. Please ensure it's a valid .xlsx file.");
+      }
+    }
+  };
 
   return (
     <div>
@@ -42,10 +89,10 @@ const AdminForm = ({
           <Label htmlFor="company">Company</Label>
           <Input 
             id="company" 
-            type="company" 
+            type="text" 
             placeholder="Company name" 
             value={values.company}
-            onChange={(e)=>setValues({company:e.target.value})}
+            onChange={(e) => setValues({ company: e.target.value })}
             disabled={disabled}
           />
           {errors.company && <div className="ml-2">
@@ -60,8 +107,8 @@ const AdminForm = ({
             id="date" 
             type="date" 
             placeholder="Date" 
-            value={values.date}
-            onChange={(e)=>setValues({date:e.target.value})}
+            value={formatDate(values.date)}
+            onChange={(e) => setValues({ date: new Date(e.target.value) })}
             disabled={disabled}
           />
           {errors.date && <div className="ml-2">
@@ -74,10 +121,10 @@ const AdminForm = ({
           <Label htmlFor="round">Round Name</Label>
           <Input 
             id="round" 
-            type="round" 
+            type="text" 
             placeholder="Round name" 
             value={values.round}
-            onChange={(e)=>setValues({round:e.target.value})}
+            onChange={(e) => setValues({ round: e.target.value })}
             disabled={disabled}
           />
           {errors.round && <div className="ml-2">
@@ -89,27 +136,29 @@ const AdminForm = ({
         <div className="grid gap-4 w-full">
           <Button 
             className="w-full"
-            onClick={onSubmit}
+            onClick={() => onSubmit(values)}
             disabled={disabled}
           >
-            {!id && <Plus className="mr-2"/>}
-            {!!id && <Save className="mr-2"/>}
-            {!id && 'Create Admin'}
+            {!id && <Plus className="mr-2" />}
+            {!!id && <Save className="mr-2" />}
+            {!id && 'Create Event'}
             {!!id && 'Save Changes'}
           </Button>
-          {!!id && <Button 
-            variant={'outline'} 
-            className="w-full"
-            onClick={onDelete}
-            disabled={disabled}
-          >
-            <Trash size={20} className="mr-2"/>
-            Delete Event
-          </Button>}  
+          
+          <div className="grid gap-2">
+            <Label htmlFor="file">Upload XLSX File</Label>
+            <Input 
+              id="file" 
+              type="file" 
+              accept=".xlsx" 
+              onChange={handleFileUpload}
+              disabled={disabled}
+            />
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default AdminForm
+export default EventForm;

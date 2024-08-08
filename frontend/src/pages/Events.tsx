@@ -2,39 +2,38 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { Loader2, Plus } from "lucide-react"
-import {eventAtom} from "../store/eventAtom"
 import { useRecoilState, useSetRecoilState } from "recoil"
-import { columns } from "../components/tables/admins/columns"
 import axios from "axios"
 import { toast } from "react-toastify"
-import adminsAtom from "../store/adminsAtom"
 import { Skeleton } from "../components/ui/skeleton"
 import disabledAtom from "../store/disabledAtom"
-import { DataTable } from "@/components/ui/data-table"
+import eventsAtom from "@/store/eventsAtom"
+import { newEventSheet } from "@/store/sheetAtom"
+import EventCard from "@/components/cards/EventCard"
 
 const Events = () => {
-    const [admins,setAdmins] = useRecoilState(adminsAtom)
+    const [events,setEvents] = useRecoilState(eventsAtom)
     const [loading,setLoading] = useState(false)
     const [disabled,setDisabled] = useRecoilState(disabledAtom)
-    const setIsNewAdminOpen = useSetRecoilState(eventAtom)
-    const OpenNewAdminSheet = () => setIsNewAdminOpen(true)
+    const setIsNewEventOpen = useSetRecoilState(newEventSheet)
+    const OpenNewEventSheet = () => setIsNewEventOpen(true)
     
     const bulkDelete = async (Ids:string[]) =>{
         try {
             setDisabled(true)
             const token = localStorage.getItem('authToken');
 
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/bulkdelete`,{Ids},{
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/bulkdelete`,{Ids},{
                 headers: {
                 'Authorization': `Bearer ${token}`,
                 },
             });
 
             if (response.data.success) {
-                toast.success("Admins successfully deleted")
-                setAdmins(([...response.data.data ]));
+                toast.success("Events successfully deleted")
+                setEvents(([...response.data.data ]));
             } else {
-                console.log("Error deleting admins.")
+                console.log("Error deleting events.")
             }
         } catch (err:any) {
             if (err.response?.data?.message) {
@@ -48,12 +47,12 @@ const Events = () => {
         }
     }
     
-    const getAdminData = async () =>{
+    const getEventData = async () =>{
         try {
             setLoading(true)
             const token = localStorage.getItem('authToken');
 
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin`, {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/event`, {
                 headers: {
                 'Authorization': `Bearer ${token}`,
                 },
@@ -61,9 +60,9 @@ const Events = () => {
 
             if (response.data.success) {
                 
-                setAdmins(([...response.data.data ]));
+                setEvents(([...response.data.data ]));
             } else {
-                console.log("Error getting admins.")
+                console.log("Error getting events.")
             }
         } catch (err:any) {
             if (err.response?.data?.message) {
@@ -78,7 +77,7 @@ const Events = () => {
     }
     
     useEffect(()=>{
-        getAdminData()
+        getEventData()
     },[])
 
     if(loading) return(
@@ -105,30 +104,23 @@ const Events = () => {
                     </CardTitle>
                     <Button 
                         className="sm"
-                        onClick={OpenNewAdminSheet}
+                        onClick={OpenNewEventSheet}
                     >
                         <Plus className="size-4 mr-2"/> 
                         Add new event
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <div>
-                        <DataTable 
-                            filterKey='email' 
-                            columns={columns} 
-                            data={admins} 
-                            onDelete={(
-                                rows
-                            )=>{
-                                const Ids = rows.map((row)=>row.original.id)
-                                console.log(Ids)
-                                bulkDelete(Ids)
-                            }}
-                            disabled={disabled}
-                        />
+                    <div className="flex flex-col gap-2 overflow-auto">
+                       {events.map((event)=>(
+                            <EventCard 
+                                key={event.id}
+                                event = {event}
+                            />
+                       ))}
                     </div>
                 </CardContent>
-            </Card>
+            </Card>a
         </div>
     )
 }

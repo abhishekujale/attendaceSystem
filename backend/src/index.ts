@@ -1,4 +1,5 @@
 import express from 'express';
+import compression from 'compression';
 import cors, { CorsOptions } from 'cors'; 
 import dotenv from 'dotenv';
 import {router as adminRouter} from "./routes/adminRoutes"
@@ -20,6 +21,7 @@ app.use("/api/admin",adminRouter)
 app.get('/',(req,res)=>{
     res.json("server is running")
 })
+app.use(compression());
 createAdmin()
 
 

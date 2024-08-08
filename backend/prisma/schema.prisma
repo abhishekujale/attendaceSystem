@@ -19,3 +19,10 @@ model Admin {
   password   String
   role       String
 }
+
+model Event {
+  id         Int      @id @default(autoincrement())
+  compony     String  
+  date        String
+  round       String
+}

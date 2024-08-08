@@ -12,6 +12,7 @@ interface EditAdminSheetState {
 interface SheetsState {
     NewAdminSheet: boolean;
     EditAdminSheet : EditAdminSheetState;
+    NewEventSheet:boolean;
 }
 
 const sheetAtom = atom<SheetsState>({
@@ -26,7 +27,8 @@ const sheetAtom = atom<SheetsState>({
                 password:'',
                 
             }
-        }
+        },
+        NewEventSheet:false,
     },
 });
 
@@ -56,6 +58,21 @@ export const editAdminSheet = selector<EditAdminSheetState>({
         set(sheetAtom, {
             ...sheets,
             EditAdminSheet: newValue as EditAdminSheetState,
+        });
+    },
+});
+
+export const newEventSheet = selector<boolean>({
+    key: 'NewEventSheet',
+    get: ({ get }) => {
+        const sheets = get(sheetAtom);
+        return sheets.NewEventSheet;
+    },
+    set: ({ set, get }, newValue) => {
+        const sheets = get(sheetAtom);
+        set(sheetAtom, {
+            ...sheets,
+            NewEventSheet: newValue as boolean,
         });
     },
 });

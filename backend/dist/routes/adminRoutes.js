@@ -134,7 +134,6 @@ router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
             return res.status(400).send({ errors, success: false });
         }
         const adminId = req.params.adminId.split(':')[1];
-        console.log(adminId);
         const adminIdNumber = Number(adminId);
         if (isNaN(adminIdNumber)) {
             return res.status(400).send({ message: "Invalid admin ID", success: false });
