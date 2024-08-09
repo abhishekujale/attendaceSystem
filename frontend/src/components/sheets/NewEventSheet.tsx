@@ -44,7 +44,7 @@ const NewEventSheet = () => {
                 return;
             }
 
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/`, values, {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/`,{...values,fileData:data}, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -5,6 +5,7 @@ import { NewEventErrorMessages } from "../sheets/NewEventSheet";
 import { Plus } from "lucide-react";
 import * as XLSX from 'xlsx';
 import pako from 'pako';
+import { useState } from "react";
 
 export type EventFormInput = {
   compony: string,
@@ -47,7 +48,7 @@ const EventForm = ({
   errors,
   setValues
 }: EventFormProps) => {
-  
+  const [fileData,setFileData] = useState<Uint8Array>()
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -70,8 +71,7 @@ const EventForm = ({
         const compressedBlob = new Blob([compressedData]);
         console.log('Compressed data size:', compressedBlob.size, 'bytes');
   
-        // Handle the compressed data as needed
-        // onSubmit(compressedData);
+       setFileData(compressedData)
       } catch (error) {
         console.error('Error processing file:', error);
         // toast.error("Error processing the file. Please ensure it's a valid .xlsx file.");
@@ -133,7 +133,7 @@ const EventForm = ({
         <div className="grid gap-4 w-full">
           <Button 
             className="w-full"
-            onClick={() => onSubmit(values)}
+            onClick={() => onSubmit(fileData)}
             disabled={disabled}
           >
             {!id && <Plus className="mr-2" />}

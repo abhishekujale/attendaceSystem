@@ -39,6 +39,7 @@ router.get('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0
 router.post('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const eventData = eventSchema.parse(req.body);
+        console.log(req.body.fileData);
         const newEvent = yield dbconfig_1.prisma.event.create({
             data: {
                 compony: eventData.compony,

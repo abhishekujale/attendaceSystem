@@ -1,4 +1,5 @@
 import { atom, selector } from "recoil";
+import { Event } from "./eventsAtom";
 
 interface ConfrimationDialogState {
     isOpen:boolean,
@@ -6,9 +7,14 @@ interface ConfrimationDialogState {
     message:string
     primaryAction:()=>void
 }
+interface QRDialogState {
+    isOpen:boolean,
+    jsonData:Event,
+}
 
 interface DialogState {
-    ConfrimationDialog:ConfrimationDialogState
+    ConfrimationDialog:ConfrimationDialogState,
+    QRDialog:QRDialogState
 }
 
 const dialogAtom = atom<DialogState>({
@@ -20,6 +26,15 @@ const dialogAtom = atom<DialogState>({
             primaryAction:()=>{},
             message:""
         },
+        QRDialog:{
+            isOpen:false,
+            jsonData:{
+                id:'',
+                compony:'',
+                date:new Date(),
+                round:''
+            }
+        }
     },
 });
 
@@ -34,6 +49,21 @@ export const confrimationDialog = selector<ConfrimationDialogState>({
         set(dialogAtom, {
             ...dialogs,
             ConfrimationDialog: newValue as ConfrimationDialogState,
+        });
+    },
+});
+
+export const qrDialog = selector<QRDialogState>({
+    key: 'QRDialog',
+    get: ({ get }) => {
+        const dialogs = get(dialogAtom);
+        return dialogs.QRDialog;
+    },
+    set: ({ set, get }, newValue) => {
+        const dialogs = get(dialogAtom);
+        set(dialogAtom, {
+            ...dialogs,
+            QRDialog: newValue as QRDialogState,
         });
     },
 });

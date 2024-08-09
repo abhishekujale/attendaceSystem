@@ -33,3 +33,12 @@ model User {
   password    String
   role        String
 }
+
+model StudentRaw {
+  id          Int      @id @default(autoincrement())
+  eventId     Int 
+  emailId     String   @unique
+  prn         String   @unique
+  name        String
+  present     Boolean
+}

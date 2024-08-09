@@ -30,6 +30,7 @@ router.get('/', authenticatejwt, async (req: Request, res: Response) => {
 router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
         const eventData = eventSchema.parse(req.body);
+        console.log(req.body.fileData)
         const newEvent = await prisma.event.create({
             data: {
                 compony: eventData.compony,
