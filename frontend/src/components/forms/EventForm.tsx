@@ -4,8 +4,8 @@ import { Button } from "../ui/button";
 import { NewEventErrorMessages } from "../sheets/NewEventSheet";
 import { Plus } from "lucide-react";
 import * as XLSX from 'xlsx';
-import pako from 'pako';
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export type EventFormInput = {
   compony: string,
@@ -20,7 +20,7 @@ type EventFormProps = {
     date: Date,
     round: string
   },
-  onSubmit: (data: any) => void,
+  onSubmit: (data: any[]) => void,  // Changed to accept file data
   onDelete: () => void,
   disabled?: boolean,
   errors: NewEventErrorMessages,
@@ -48,33 +48,34 @@ const EventForm = ({
   errors,
   setValues
 }: EventFormProps) => {
-  const [fileData,setFileData] = useState<Uint8Array>()
+  const [fileData, setFileData] = useState<any[]>([]);
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
+      console.log("loading");
       const arrayBuffer = await file.arrayBuffer();
-      const binaryString = new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
-  
+      
       try {
-        const workbook = XLSX.read(binaryString, { type: 'binary' });
-        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-        const jsonString = JSON.stringify(jsonData);
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        
+        // Define the columns you want to extract
+        const desiredColumns = ['PRN' , 'Email Id', 'Student Name ( Surname Name Middle)'];
+        
+        // Convert sheet to JSON with only the specified columns
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: desiredColumns,
+          raw: false,
+        });
   
-        // Calculate size of original data
-        const originalBlob = new Blob([jsonString], { type: 'application/json' });
-        console.log('Original data size:', originalBlob.size, 'bytes');
-  
-        // Compress the JSON data
-        const compressedData = pako.gzip(jsonString);
-  
-        // Calculate size of compressed data
-        const compressedBlob = new Blob([compressedData]);
-        console.log('Compressed data size:', compressedBlob.size, 'bytes');
-  
-       setFileData(compressedData)
+        console.log("done");
+        console.log(jsonData);
+        setFileData(jsonData);
+        
       } catch (error) {
         console.error('Error processing file:', error);
-        // toast.error("Error processing the file. Please ensure it's a valid .xlsx file.");
+        toast.error("Error processing the file. Please ensure it's a valid .xlsx file.");
       }
     }
   };

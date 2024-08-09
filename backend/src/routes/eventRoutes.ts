@@ -5,6 +5,10 @@ import { z } from 'zod';
 
 const router = require('express').Router();
 
+
+// In-memory storage for file chunks
+let chunks: Record<string, Uint8Array[]> = {};
+
 // Validation schema for event input
 const eventSchema = z.object({
     compony: z.string().min(1, 'Company name is required'),
@@ -30,7 +34,6 @@ router.get('/', authenticatejwt, async (req: Request, res: Response) => {
 router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
         const eventData = eventSchema.parse(req.body);
-        console.log(req.body.fileData)
         const newEvent = await prisma.event.create({
             data: {
                 compony: eventData.compony,
@@ -40,7 +43,7 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
         });
         return res.status(201).send({
             success: true,
-            data: newEvent,
+            data: {...newEvent },  // Include the ID in the response
             message: "Event created successfully"
         });
     } catch (error) {
@@ -54,6 +57,25 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
             }
             return res.status(400).send({ success: false, message: "Validation error", error: validationErrors });
         }
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+});
+
+router.post('/upload-chunk/:eventId', authenticatejwt, async (req: Request, res: Response) => {
+    try {
+        const { eventId } = req.params;
+        const { chunkData } = req.body;
+
+        // For now, just console log the data
+        console.log(`Received chunk data for event ID: ${eventId}`);
+        console.log('Chunk data:', chunkData);
+
+        return res.status(200).send({
+            success: true,
+            message: "Chunk received successfully"
+        });
+    } catch (error) {
         console.error(error);
         return res.status(500).send({ success: false, message: "Internal server error", error });
     }

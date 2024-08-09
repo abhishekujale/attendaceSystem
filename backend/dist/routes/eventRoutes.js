@@ -15,6 +15,8 @@ const dbconfig_1 = require("../config/dbconfig");
 const zod_1 = require("zod");
 const router = require('express').Router();
 exports.router = router;
+// In-memory storage for file chunks
+let chunks = {};
 // Validation schema for event input
 const eventSchema = zod_1.z.object({
     compony: zod_1.z.string().min(1, 'Company name is required'),
@@ -39,7 +41,6 @@ router.get('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0
 router.post('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const eventData = eventSchema.parse(req.body);
-        console.log(req.body.fileData);
         const newEvent = yield dbconfig_1.prisma.event.create({
             data: {
                 compony: eventData.compony,
@@ -49,7 +50,7 @@ router.post('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 
         });
         return res.status(201).send({
             success: true,
-            data: newEvent,
+            data: Object.assign({}, newEvent), // Include the ID in the response
             message: "Event created successfully"
         });
     }
@@ -64,6 +65,23 @@ router.post('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 
             }
             return res.status(400).send({ success: false, message: "Validation error", error: validationErrors });
         }
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+}));
+router.post('/upload-chunk/:eventId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { eventId } = req.params;
+        const { chunkData } = req.body;
+        // For now, just console log the data
+        console.log(`Received chunk data for event ID: ${eventId}`);
+        console.log('Chunk data:', chunkData);
+        return res.status(200).send({
+            success: true,
+            message: "Chunk received successfully"
+        });
+    }
+    catch (error) {
         console.error(error);
         return res.status(500).send({ success: false, message: "Internal server error", error });
     }
