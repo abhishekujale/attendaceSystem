@@ -23,8 +23,10 @@ export const QrDialogue = () => {
     };
 
     useEffect(() => {
-        generateQRCode(qr.jsonData);
-    }, []);
+        if (qr.isOpen) {
+            generateQRCode(qr.jsonData);
+        }
+    }, [qr.isOpen, qr.jsonData]); // Add qr.jsonData as a dependency    
 
     const downloadPDF = () => {
         if (!qrCodeUrl) return;

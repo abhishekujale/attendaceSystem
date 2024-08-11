@@ -11,6 +11,7 @@ import Admins from './pages/Admins';
 import Events from './pages/Events';
 import SignupUser from './pages/SignupUser';
 import SigninUser from './pages/SigninUser';
+import UserDashboard from './pages/UserDashboard';
 
 
 
@@ -24,7 +25,7 @@ function App() {
             <Route path="/signin" element={<SignIn/>}></Route>
             <Route 
               path="/dashboard" 
-              element={<ProtectedRoute>
+              element={<ProtectedRoute roles={['admin','superAdmin']}>
                           <Layout>
                             <Dashboard/>
                           </Layout>
@@ -34,7 +35,7 @@ function App() {
             </Route>
             <Route 
                 path="/admins" 
-                element={<ProtectedRoute>
+                element={<ProtectedRoute roles={['superAdmin']}>
                             <Layout>
                               <Admins/>
                             </Layout>
@@ -43,26 +44,34 @@ function App() {
             </Route>
             <Route 
                 path="/events" 
-                element={<ProtectedRoute>
-                            <Layout>
-                              <Events />
-                            </Layout>
-                          </ProtectedRoute>}
+                element={<ProtectedRoute roles={['admin','superAdmin']}>
+                  <Layout>
+                    <Events />
+                  </Layout>
+                </ProtectedRoute>}
             >
             </Route>
             <Route 
-                path="/signupuser" 
-                element={<ProtectedRoute>
-                              <SignupUser />
-                          </ProtectedRoute>}
+              path="/signupuser" 
+              element={<SignupUser />}
             >
             </Route>
             <Route 
-                path="/signinuser" 
-                element={<ProtectedRoute>
-                              <SigninUser />
-                          </ProtectedRoute>}
+              path="/signinuser" 
+              element={<SigninUser />}
             >
+            </Route>
+            <Route
+              path='userdashboard'
+              element={
+                <ProtectedRoute roles={['user']}>
+                  <Layout>
+                    <UserDashboard />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            >
+
             </Route>
           </Routes>
         </BrowserRouter>

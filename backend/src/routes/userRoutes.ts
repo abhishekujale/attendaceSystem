@@ -96,6 +96,54 @@ router.get('/me', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
+// ... other imports and existing routes ...
+
+// Mark attendance route
+router.post('/mark-attendance/:eventId', authenticatejwt, async (req: Request, res: Response) => {
+    try {
+        const { eventId } = req.params;
+        const userId = req.headers.id;
+        console.log(typeof userId)
+        if (!userId) {
+            return res.status(401).send({ success: false, message: "Unauthorized" });
+        }
+
+        // Check if the user exists in the User table
+        //@ts-ignore
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) {
+            return res.status(404).send({ success: false, message: "User not found" });
+        }
+
+        // Check if there's an entry in StudentRaw table with the eventId and user's email
+        const studentEntry = await prisma.studentRaw.findFirst({
+            where: {
+                eventId: Number(eventId),
+                emailId: user.email // Using the email from the found user
+            }
+        });
+
+        if (!studentEntry) {
+            return res.status(404).send({ success: false, message: "Student not registered for this event" });
+        }
+
+        // Update the presence
+        const updatedEntry = await prisma.studentRaw.update({
+            where: { id: studentEntry.id },
+            data: { present: true }
+        });
+
+        return res.status(200).send({
+            success: true,
+            message: "Attendance marked successfully",
+            data: updatedEntry
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+});
 
 
 export {router};

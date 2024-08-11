@@ -1,6 +1,6 @@
 import { atom } from "recoil"
 
-const adminAtom = atom({
+const userAtom = atom({
     key:'User',
     default:{
         id:'',
@@ -9,4 +9,4 @@ const adminAtom = atom({
     }
 })
 
-export default adminAtom;
+export default userAtom;

@@ -35,7 +35,7 @@ const SigninUser = () => {
           if (response?.data.success) {
             localStorage.setItem('authToken', response?.data.authToken);
             toast.success(response?.data.message);
-            navigate('/events'); // Navigate after successful login
+            navigate('/userdashboard'); // Navigate after successful login
           } else {
             toast.error(response?.data.message);
           }
@@ -138,7 +138,7 @@ const SigninUser = () => {
                 </div>
                 <div className="text-center mt-1">
                         <span className="text-sm text-gray-600">
-                            Already have an account? <Link to="/signup" className="text-blue-600 hover:underline">Sign Up</Link>
+                            Already have an account? <Link to="/signupuser" className="text-blue-600 hover:underline">Sign Up</Link>
                         </span>
                 </div>
               </div>

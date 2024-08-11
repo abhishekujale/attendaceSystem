@@ -11,26 +11,21 @@ import { Button } from "../../ui/button"
 import { Menu } from "lucide-react"
 const routes =[
     {
-        href:'/dashboard',
-        label:'Overview'
+        href:'/userdashboard',
+        label:'Dashboard'
     },
     {
-        href:'/transactions',
-        label:'Transactions'
+        href:'/dashboard',
+        label:'Dashboard'
     },
     {
         href:'/admins',
         label:'Admins'
     },
     {
-        href:'/categories',
-        label:'Categories'
+        href:'/events',
+        label:'Events'
     },
-    {
-        href:'/settings',
-        label:'Settings'
-    },
-
 ]
 
 const Navigation = () => {

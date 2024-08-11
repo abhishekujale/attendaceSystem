@@ -74,41 +74,24 @@ router.post('/upload-chunk/:eventId', authMiddleware_1.authenticatejwt, (req, re
         const { eventId } = req.params;
         const { chunkData } = req.body;
         console.log(`Received chunk data for event ID: ${eventId}`);
-        // Process each student record in the chunk
-        for (const student of chunkData) {
-            try {
-                yield dbconfig_1.prisma.studentRaw.create({
-                    data: {
-                        eventId: parseInt(eventId),
-                        emailId: student.email,
-                        prn: student.prn,
-                        name: student.name,
-                        branch: student.branch,
-                        present: false // Default to false, can be updated later
-                    }
-                });
-            }
-            catch (error) {
-                console.error(`Error adding student ${student.name}:`, error);
-                // If it's a unique constraint violation, you might want to update the record instead
-                if (error.code === 'P2002') {
-                    yield dbconfig_1.prisma.studentRaw.update({
-                        where: {
-                            emailId: student.email
-                        },
-                        data: {
-                            eventId: parseInt(eventId),
-                            prn: student.prn,
-                            name: student.name,
-                            branch: student.branch
-                        }
-                    });
-                }
-            }
-        }
+        // Prepare the data for bulk insert
+        const studentsData = chunkData.map(student => ({
+            eventId: parseInt(eventId),
+            emailId: student.email,
+            prn: student.prn,
+            name: student.name,
+            branch: student.branch,
+            present: false // Default to false
+        }));
+        // Perform bulk insert
+        const result = yield dbconfig_1.prisma.studentRaw.createMany({
+            data: studentsData,
+            skipDuplicates: true, // This will skip records that would cause a unique constraint violation
+        });
+        console.log(`Inserted ${result.count} records`);
         return res.status(200).send({
             success: true,
-            message: "Chunk processed and added to database successfully"
+            message: `Chunk processed. ${result.count} records added to database successfully`
         });
     }
     catch (error) {

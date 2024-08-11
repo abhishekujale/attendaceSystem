@@ -94,3 +94,45 @@ router.get('/me', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void
         return res.status(400).send({ success: false, message: "Error getting user", error });
     }
 }));
+// ... other imports and existing routes ...
+// Mark attendance route
+router.post('/mark-attendance/:eventId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { eventId } = req.params;
+        const userId = req.headers.id;
+        console.log(typeof userId);
+        if (!userId) {
+            return res.status(401).send({ success: false, message: "Unauthorized" });
+        }
+        // Check if the user exists in the User table
+        //@ts-ignore
+        const user = yield dbconfig_1.prisma.user.findUnique({ where: { id: userId } });
+        if (!user) {
+            return res.status(404).send({ success: false, message: "User not found" });
+        }
+        // Check if there's an entry in StudentRaw table with the eventId and user's email
+        const studentEntry = yield dbconfig_1.prisma.studentRaw.findFirst({
+            where: {
+                eventId: Number(eventId),
+                emailId: user.email // Using the email from the found user
+            }
+        });
+        if (!studentEntry) {
+            return res.status(404).send({ success: false, message: "Student not registered for this event" });
+        }
+        // Update the presence
+        const updatedEntry = yield dbconfig_1.prisma.studentRaw.update({
+            where: { id: studentEntry.id },
+            data: { present: true }
+        });
+        return res.status(200).send({
+            success: true,
+            message: "Attendance marked successfully",
+            data: updatedEntry
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+}));
