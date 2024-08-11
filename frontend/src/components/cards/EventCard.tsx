@@ -1,4 +1,3 @@
-
 import { Event } from "@/store/eventsAtom";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -18,12 +17,10 @@ const EventCard = ({ event }: EventProps) => {
         year: 'numeric'
     }).format(new Date(date));
 
-    
-
     const handleGenerateClick = () => {
         setQRDialogState((prev) => ({
             ...prev,
-            jsonData: { ...event },
+            jsonData: { id:event.id , compony:event.compony },
             isOpen: true
         }));
     };

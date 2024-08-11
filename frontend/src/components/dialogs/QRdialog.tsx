@@ -4,14 +4,17 @@ import { useRecoilState } from "recoil";
 import { qrDialog } from "@/store/dialogAtom";
 import { useEffect, useState } from "react";
 import QRCode from 'qrcode';
-import { Event } from "@/store/eventsAtom";
 import jsPDF from 'jspdf';
 
+export type QrData = {
+    id:string,
+    compony:string
+}
 export const QrDialogue = () => {
     const [qr, setQr] = useRecoilState(qrDialog);
     const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
 
-    const generateQRCode = async (data: Event) => {
+    const generateQRCode = async (data: QrData) => {
         const jsonData = JSON.stringify(data);
 
         try {
@@ -43,9 +46,7 @@ export const QrDialogue = () => {
                 isOpen: false,
                 jsonData: {
                     id: '',
-                    compony: '',
-                    date: new Date(),
-                    round: ''
+                    compony:''
                 }
             }))
         }>
@@ -72,9 +73,7 @@ export const QrDialogue = () => {
                             isOpen: false,
                             jsonData: {
                                 id: '',
-                                compony: '',
-                                date: new Date(),
-                                round: ''
+                                compony: ''
                             }
                         }))
                     }>

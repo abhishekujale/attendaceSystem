@@ -1,5 +1,5 @@
+import { QrData } from "@/components/dialogs/QRdialog";
 import { atom, selector } from "recoil";
-import { Event } from "./eventsAtom";
 
 interface ConfrimationDialogState {
     isOpen:boolean,
@@ -9,7 +9,7 @@ interface ConfrimationDialogState {
 }
 interface QRDialogState {
     isOpen:boolean,
-    jsonData:Event,
+    jsonData:QrData,
 }
 
 interface DialogState {
@@ -30,9 +30,7 @@ const dialogAtom = atom<DialogState>({
             isOpen:false,
             jsonData:{
                 id:'',
-                compony:'',
-                date:new Date(),
-                round:''
+                compony:''
             }
         }
     },

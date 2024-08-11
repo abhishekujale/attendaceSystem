@@ -9,8 +9,6 @@ const UserDashboard = () => {
   const [scannedData, setScannedData] = useState<{
     id: string;
     compony: string;
-    date: Date;
-    round: string;
   } | null>(null);
 
   const [showScanner, setShowScanner] = useState(false);
@@ -22,8 +20,6 @@ const UserDashboard = () => {
         setScannedData({
           id: parsedData.id,
           compony: parsedData.compony,
-          date: new Date(parsedData.date),
-          round: parsedData.round,
         });
         console.log(parsedData);
         setShowScanner(false);
