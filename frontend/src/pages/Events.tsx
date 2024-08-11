@@ -18,35 +18,6 @@ const Events = () => {
     const setIsNewEventOpen = useSetRecoilState(newEventSheet)
     const OpenNewEventSheet = () => setIsNewEventOpen(true)
     
-    const bulkDelete = async (Ids:string[]) =>{
-        try {
-            setDisabled(true)
-            const token = localStorage.getItem('authToken');
-
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/event/bulkdelete`,{Ids},{
-                headers: {
-                'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            if (response.data.success) {
-                toast.success("Events successfully deleted")
-                setEvents(([...response.data.data ]));
-            } else {
-                console.log("Error deleting events.")
-            }
-        } catch (err:any) {
-            if (err.response?.data?.message) {
-                toast.error(err.response.data.message);
-            }
-            else {
-                toast.error("Something went wrong!");
-            }
-        } finally {
-            setDisabled(false);
-        }
-    }
-    
     const getEventData = async () =>{
         try {
             setLoading(true)
@@ -111,7 +82,7 @@ const Events = () => {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex flex-col gap-2 overflow-auto">
+                    <div className="flex flex-col gap-4 overflow-auto">
                        {events.map((event)=>(
                             <EventCard 
                                 key={event.id}

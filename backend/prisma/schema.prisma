@@ -21,10 +21,11 @@ model Admin {
 }
 
 model Event {
-  id         Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   compony     String  
   date        String
   round       String
+  students    StudentRaw[] // Relation field
 }
 
 model User {
@@ -36,9 +37,11 @@ model User {
 
 model StudentRaw {
   id          Int      @id @default(autoincrement())
-  eventId     Int 
+  eventId     Int
   emailId     String   @unique
   prn         String   @unique
   name        String
+  branch      String 
   present     Boolean
+  event       Event    @relation(fields: [eventId], references: [id]) // Relation field
 }

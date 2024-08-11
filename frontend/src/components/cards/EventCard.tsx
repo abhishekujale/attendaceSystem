@@ -21,8 +21,11 @@ const EventCard = ({ event }: EventProps) => {
     
 
     const handleGenerateClick = () => {
-        setQRDialogState(()=>({
-            jsonData:event,
+        setQRDialogState((prev)=>({
+            jsonData:{
+                ...prev.jsonData,
+                ...event
+            },
             isOpen:true
         }))
     };

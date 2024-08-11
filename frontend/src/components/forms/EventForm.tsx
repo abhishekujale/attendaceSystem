@@ -61,21 +61,38 @@ const EventForm = ({
         const worksheet = workbook.Sheets[sheetName];
         
         // Define the columns you want to extract
-        const desiredColumns = ['PRN' , 'Email Id', 'Student Name ( Surname Name Middle)'];
+        const requiredColumns = ['PRN' , 'Student Name ( Surname Name Middle)' , 'Email ID', 'B. Tech Branch'];
+        
+        // Get the headers from the worksheet
+        const headers = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0] as string[];
+        
+        // Validate if all required columns are present
+        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+        if (missingColumns.length > 0) {
+          throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
+        }
         
         // Convert sheet to JSON with only the specified columns
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: desiredColumns,
+          header: requiredColumns,
           raw: false,
-        });
+        }) as Array<Record<string, string>>;
+  
+        // Rename the columns to the desired format
+        const formattedData = jsonData.map(row => ({
+          name: row['Student Name ( Surname Name Middle)'],
+          prn: row['PRN'],
+          email: row['Email ID'],
+          branch: row['B. Tech Branch']
+        }));
   
         console.log("done");
-        console.log(jsonData);
-        setFileData(jsonData);
+        console.log(formattedData);
+        setFileData(formattedData);
         
       } catch (error) {
         console.error('Error processing file:', error);
-        toast.error("Error processing the file. Please ensure it's a valid .xlsx file.");
+        toast.error(`Error processing the file: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
   };
@@ -131,6 +148,16 @@ const EventForm = ({
             </p>
           </div>}
         </div>
+        <div className="grid gap-2">
+          <Label htmlFor="file">Upload XLSX File</Label>
+          <Input 
+            id="file" 
+            type="file" 
+            accept=".xlsx" 
+            onChange={handleFileUpload}
+            disabled={disabled}
+          />
+        </div>
         <div className="grid gap-4 w-full">
           <Button 
             className="w-full"
@@ -140,17 +167,6 @@ const EventForm = ({
             {!id && <Plus className="mr-2" />}
             {!id && 'Create Event'}
           </Button>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="file">Upload XLSX File</Label>
-            <Input 
-              id="file" 
-              type="file" 
-              accept=".xlsx" 
-              onChange={handleFileUpload}
-              disabled={disabled}
-            />
-          </div>
         </div>
       </div>
     </div>

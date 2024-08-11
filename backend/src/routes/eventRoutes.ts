@@ -16,6 +16,13 @@ const eventSchema = z.object({
     round: z.string().min(1, 'Round name is required'),
 });
 
+interface StudentChunkData {
+    email: string;
+    prn: string;
+    name: string;
+    branch: string;
+}
+
 // Get all events
 router.get('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
@@ -65,15 +72,31 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
 router.post('/upload-chunk/:eventId', authenticatejwt, async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
-        const { chunkData } = req.body;
+        const { chunkData } :{chunkData:StudentChunkData[]} = req.body;
 
-        // For now, just console log the data
         console.log(`Received chunk data for event ID: ${eventId}`);
-        console.log('Chunk data:', chunkData);
+
+        // Prepare the data for bulk insert
+        const studentsData = chunkData.map(student => ({
+            eventId: parseInt(eventId),
+            emailId: student.email,
+            prn: student.prn,
+            name: student.name,
+            branch: student.branch,
+            present: false // Default to false
+        }));
+
+        // Perform bulk insert
+        const result = await prisma.studentRaw.createMany({
+            data: studentsData,
+            skipDuplicates: true, // This will skip records that would cause a unique constraint violation
+        });
+
+        console.log(`Inserted ${result.count} records`);
 
         return res.status(200).send({
             success: true,
-            message: "Chunk received successfully"
+            message: `Chunk processed. ${result.count} records added to database successfully`
         });
     } catch (error) {
         console.error(error);
