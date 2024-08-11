@@ -9,26 +9,13 @@ import { useMedia } from "react-use"
 import { useState } from "react"
 import { Button } from "../../ui/button"
 import { Menu } from "lucide-react"
-const routes =[
-    {
-        href:'/userdashboard',
-        label:'Dashboard'
-    },
-    {
-        href:'/dashboard',
-        label:'Dashboard'
-    },
-    {
-        href:'/admins',
-        label:'Admins'
-    },
-    {
-        href:'/events',
-        label:'Events'
-    },
-]
+import { useRecoilValue } from "recoil"
+import userAtom from "@/store/userAtom"
+import adminAtom from "@/store/adminAtom"
 
 const Navigation = () => {
+    const user = useRecoilValue(userAtom)
+    const admin = useRecoilValue(adminAtom)
     const pathname = useLocation().pathname
     const [open,setOpen]=useState(false)
     const isMobile = useMedia("( max-width : 1024px )" ,false)
@@ -37,7 +24,36 @@ const Navigation = () => {
         navigate(href)
         setOpen(false)
     }
-
+    console.log(user.role)
+    let routes = !!user.id && user.role === 'user' ? [
+        {
+            href:'/userdashboard',
+            label:'Dashboard'
+        },
+    ] : !!admin.id && admin.role === 'admin' ? [
+        {
+            href:'/dashboard',
+            label:'Dashboard'
+        },
+        {
+            href:'/events',
+            label:'Events'
+        },
+    ] : !!admin.id && admin.role === 'superAdmin' ?  
+    [
+        {
+            href:'/dashboard',
+            label:'Dashboard'
+        },
+        {
+            href:'/events',
+            label:'Events'
+        },
+        {
+            href:'/admins',
+            label:'Admins'
+        },
+    ]:[];
     if(isMobile)
     {
         return(
