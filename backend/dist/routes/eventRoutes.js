@@ -26,7 +26,7 @@ const eventSchema = zod_1.z.object({
 // Get all events
 router.get('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const events = yield dbconfig_1.prisma.event.findMany();
+        const events = (yield dbconfig_1.prisma.event.findMany()) || [];
         return res.status(200).send({
             success: true,
             data: events
@@ -99,12 +99,12 @@ router.post('/upload-chunk/:eventId', authMiddleware_1.authenticatejwt, (req, re
         return res.status(500).send({ success: false, message: "Internal server error", error });
     }
 }));
-// Delete a single event by ID
 router.delete('/:id', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
+        const eventId = Number(id);
         const deletedEvent = yield dbconfig_1.prisma.event.delete({
-            where: { id: Number(id) }
+            where: { id: eventId }
         });
         if (!deletedEvent) {
             return res.status(404).send({ success: false, message: "Event not found" });
@@ -112,7 +112,7 @@ router.delete('/:id', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(
         return res.status(200).send({
             success: true,
             data: deletedEvent,
-            message: "Event deleted successfully"
+            message: "Event and associated student data deleted successfully"
         });
     }
     catch (error) {
@@ -127,7 +127,11 @@ router.get('/:eventId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
             //@ts-ignore
             where: { id: Number(eventId) },
             include: {
-                students: true
+                students: {
+                    where: {
+                        present: true
+                    }
+                }
             },
         });
         if (!event) {
@@ -136,6 +140,28 @@ router.get('/:eventId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
         return res.status(200).send({
             success: true,
             data: event,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+}));
+router.patch('/:id/end', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const eventId = Number(id);
+        const updatedEvent = yield dbconfig_1.prisma.event.update({
+            where: { id: eventId },
+            data: { status: 'ended' }
+        });
+        if (!updatedEvent) {
+            return res.status(404).send({ success: false, message: "Event not found" });
+        }
+        return res.status(200).send({
+            success: true,
+            data: updatedEvent,
+            message: "Event status updated to ended successfully"
         });
     }
     catch (error) {

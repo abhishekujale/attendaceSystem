@@ -100,7 +100,6 @@ router.post('/mark-attendance/:eventId', authMiddleware_1.authenticatejwt, (req,
     try {
         const { eventId } = req.params;
         const userId = req.headers.id;
-        console.log(typeof userId);
         if (!userId) {
             return res.status(401).send({ success: false, message: "Unauthorized" });
         }
@@ -109,6 +108,16 @@ router.post('/mark-attendance/:eventId', authMiddleware_1.authenticatejwt, (req,
         const user = yield dbconfig_1.prisma.user.findUnique({ where: { id: userId } });
         if (!user) {
             return res.status(404).send({ success: false, message: "User not found" });
+        }
+        // Check if the event exists and its status
+        const event = yield dbconfig_1.prisma.event.findUnique({
+            where: { id: Number(eventId) }
+        });
+        if (!event) {
+            return res.status(404).send({ success: false, message: "Event not found" });
+        }
+        if (event.status === 'ended') {
+            return res.status(400).send({ success: false, message: "Cannot mark attendance for an ended event" });
         }
         // Check if there's an entry in StudentRaw table with the eventId and user's email
         const studentEntry = yield dbconfig_1.prisma.studentRaw.findFirst({

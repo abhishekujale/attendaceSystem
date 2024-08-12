@@ -26,7 +26,7 @@ interface StudentChunkData {
 // Get all events
 router.get('/', authenticatejwt, async (req: Request, res: Response) => {
     try {
-        const events = await prisma.event.findMany();
+        const events = await prisma.event.findMany() || [];
         return res.status(200).send({
             success: true,
             data: events
@@ -104,20 +104,23 @@ router.post('/upload-chunk/:eventId', authenticatejwt, async (req: Request, res:
     }
 });
 
-// Delete a single event by ID
 router.delete('/:id', authenticatejwt, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        const eventId = Number(id);
+
         const deletedEvent = await prisma.event.delete({
-            where: { id: Number(id) }
+            where: { id: eventId }
         });
+
         if (!deletedEvent) {
             return res.status(404).send({ success: false, message: "Event not found" });
         }
+
         return res.status(200).send({
             success: true,
             data: deletedEvent,
-            message: "Event deleted successfully"
+            message: "Event and associated student data deleted successfully"
         });
     } catch (error) {
         console.error(error);
@@ -133,7 +136,11 @@ router.get('/:eventId', authenticatejwt, async (req: Request, res: Response) => 
             //@ts-ignore
             where: { id: Number(eventId) },
             include: {
-                students:true
+                students:{
+                    where:{
+                        present:true
+                    }
+                }
             },
         });
 
@@ -151,5 +158,29 @@ router.get('/:eventId', authenticatejwt, async (req: Request, res: Response) => 
     }
 });
 
+router.patch('/:id/end', authenticatejwt, async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const eventId = Number(id);
+
+        const updatedEvent = await prisma.event.update({
+            where: { id: eventId },
+            data: { status: 'ended' }
+        });
+
+        if (!updatedEvent) {
+            return res.status(404).send({ success: false, message: "Event not found" });
+        }
+
+        return res.status(200).send({
+            success: true,
+            data: updatedEvent,
+            message: "Event status updated to ended successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+});
 
 export { router };

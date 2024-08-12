@@ -47,6 +47,62 @@ const Events = () => {
         }
     }
     
+    const handleEndEvent = async (eventId: string) => {
+        try {
+            setDisabled(true);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/event/${eventId}/end`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.success) {
+                setEvents(prevEvents => prevEvents.map(event => 
+                    event.id === eventId ? { ...event, status: 'ended' } : event
+                ));
+                toast.success("Event ended successfully");
+            } else {
+                toast.error("Error ending event");
+            }
+        } catch (err: any) {
+            if (err.response?.data?.message) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error("Something went wrong!");
+            }
+        } finally {
+            setDisabled(false);
+        }
+    };
+
+    const handleDeleteEvent = async (eventId: string) => {
+        try {
+            setDisabled(true);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/event/${eventId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.data.success) {
+                setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
+                toast.success("Event deleted successfully");
+            } else {
+                toast.error("Error deleting event");
+            }
+        } catch (err: any) {
+            if (err.response?.data?.message) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error("Something went wrong!");
+            }
+        } finally {
+            setDisabled(false);
+        }
+    };
+
     useEffect(()=>{
         getEventData()
     },[])
@@ -84,9 +140,11 @@ const Events = () => {
                 <CardContent>
                     <div className="flex flex-col gap-4 overflow-auto">
                        {events.map((event)=>(
-                            <EventCard 
+                             <EventCard 
                                 key={event.id}
-                                event = {event}
+                                event={event}
+                                onDelete={handleDeleteEvent}
+                                onEndEvent={handleEndEvent}
                             />
                        ))}
                     </div>

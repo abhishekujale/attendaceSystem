@@ -20,19 +20,20 @@ model Admin {
   role       String
 }
 
-model Event {
-  id          Int          @id @default(autoincrement())
-  compony     String  
-  date        String
-  round       String
-  students    StudentRaw[] // Relation field
-}
-
 model User {
   id          Int      @id @default(autoincrement())
   email       String   @unique
   password    String
   role        String  @default("user")
+}
+
+model Event {
+  id          Int          @id @default(autoincrement())
+  compony     String  
+  date        String
+  round       String
+  status      String       @default("active")
+  students    StudentRaw[] 
 }
 
 model StudentRaw {
@@ -43,5 +44,5 @@ model StudentRaw {
   name        String
   branch      String 
   present     Boolean
-  event       Event    @relation(fields: [eventId], references: [id]) // Relation field
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }

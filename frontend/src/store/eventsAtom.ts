@@ -4,7 +4,8 @@ export type Event ={
     id:string,
     compony:string,
     date:Date,
-    round:string
+    round:string,
+    status:string
 }
 
 const eventsAtom = atom<Event[]>({
