@@ -28,15 +28,19 @@ const EventCard = ({ event }: EventProps) => {
     };
 
     return (
-        <div className="mx-auto w-full cursor-pointer" onClick={()=>navigate(`/event/${id}`)}>
-            <Card className="border border-gray-200 shadow-sm hover:shadow-md hover:opacity-50 hover:bg-gray-100 relative rounded-2xl">
+        <div className="mx-auto w-full cursor-pointer" onClick={(e)=>{ e.stopPropagation();  navigate(`/event/${id}`)}}>
+            <Card className="border border-gray-200 shadow-sm hover:shadow-md hover:bg-gray-200 relative rounded-2xl">
                 <p className="absolute right-5 top-5 text-sm text-[#444]">
                     {formattedDate}
                 </p>
                 <div className="absolute right-5 bottom-5 text-sm text-[#444]">
                     <Button
-                        className="px-4 py-2 bg-gradient-to-r text-white rounded-md shadow-md transition-all duration-300"
-                        onClick={handleGenerateClick}
+                        className="px-4 py-2 bg-gradient-to-r text-white rounded-md shadow-md transition-all duration-300 "
+                        onClick={(e)=>{
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleGenerateClick()
+                        }}
                     >
                         Generate QR
                     </Button>

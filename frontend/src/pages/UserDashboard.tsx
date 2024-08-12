@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useState } from 'react';
 import QrScanner from 'react-qr-scanner';
 import { toast } from 'react-toastify';
+import { MdQrCodeScanner } from "react-icons/md";
+
 
 const UserDashboard = () => {
   const [scannedData, setScannedData] = useState<{
@@ -59,8 +61,10 @@ const UserDashboard = () => {
   };
 
   return (
-    <div>
-      <Button onClick={() => setShowScanner(true)}>Scan QR Code</Button>
+    <div className='flex justify-center w-full '>
+      <div className='flex justify-center items-center w-screen sm:w-96 h-96 sm:h-64  rounded-3xl bg-white text-blue-600 text-9xl -mt-28  border-blue-600 border-4 '>
+      <button onClick={() => setShowScanner(true)}><MdQrCodeScanner className='static' /></button>
+      </div>
       <Dialog open={showScanner} onOpenChange={()=>setShowScanner(false)}>
         <DialogContent>
           <DialogHeader>
@@ -68,7 +72,7 @@ const UserDashboard = () => {
               Scan QR
             </DialogTitle>
             <DialogDescription>
-              Scan you QR code
+              Scan your QR code
             </DialogDescription>
           </DialogHeader>
           

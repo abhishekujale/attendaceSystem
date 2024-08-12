@@ -8,6 +8,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
+import kitlogo from "../../public/kitlogo.png";
 
 interface ErrorMessages {
   email?: string;
@@ -59,14 +60,16 @@ const SignupUser = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-1">
-      <div className="pt-2">Kit logo</div>
       <div className="h-full lg:flex flex-col items-center justify-center px-4">
-        <div className="text-center space-y-4 pt-16">
+        <div className="text-center">
+          <div className="flex justify-center items-center">
+            <img src={kitlogo} alt="kitlogo" className="w-1/2 h-1/2" />
+          </div>
           <h1 className="font-bold text-3xl text-[#2E2A47]">
-            Welcome to <span className="text-blue-600">Finance</span>
+            Welcome to <span className="text-blue-600">KIT TPO</span>
           </h1>
         </div>
-        <div className="mt-5">
+        <div className="mt-2">
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl">Create an account</CardTitle>
@@ -74,13 +77,13 @@ const SignupUser = () => {
                 Enter your details below to signup
               </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4">
+            <CardContent className="grid ">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
                 </div>
               </div>
-              <div className="grid gap-2">
+              <div className="grid">
                 <Label htmlFor="email">Email</Label>
                 <Input 
                   id="email" 
@@ -97,9 +100,9 @@ const SignupUser = () => {
                 </div>}
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid">
                 <Label htmlFor="password">Password</Label>
-                <div className="flex gap-2 items-center">
+                <div className="flex  items-center">
                   <Input 
                     id="password" 
                     type={isPasswordVisible ? 'text' : 'password'} 
@@ -129,9 +132,9 @@ const SignupUser = () => {
                 </div>}
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid ">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center">
                   <Input 
                     id="confirm-password" 
                     type={isPasswordVisible ? 'text' : 'password'} 

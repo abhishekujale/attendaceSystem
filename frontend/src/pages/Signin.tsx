@@ -7,6 +7,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Label } from "@radix-ui/react-label";
+import kitlogo from "../../public/kitlogo.png"
 
 interface ErrorMessages {
   email?: string;
@@ -51,14 +52,18 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-1">
-      <div className=" pt-2">Kit logo</div>
+      
       <div className="h-full lg:flex flex-col items-center justify-center px-4">
-        <div className="text-center space-y-4 pt-16">
+        <div className="flex justify-center items-center">
+          <div>
+            <div className="m-auto flex justify-center">
+          <img src={kitlogo} alt=""  className="w-4/6 h-4/6"/>
+          </div>
           <h1 className="font-bold text-3xl text-[#2E2A47]">
-            Welcome back to <span className="text-blue-600">Finance</span>
+            Welcome  to <span className="text-blue-600">KIT TPO</span>
           </h1>
-        </div>
-        <div className="mt-8">
+       
+        <div className="">
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl">Log in to account</CardTitle>
@@ -139,6 +144,8 @@ const SignIn = () => {
             </CardFooter>
           </Card>
         </div>
+        </div>
+      </div>
       </div>
     </div>
   )

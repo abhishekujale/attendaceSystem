@@ -91,7 +91,7 @@ const Events = () => {
                        ))}
                     </div>
                 </CardContent>
-            </Card>a
+            </Card>
         </div>
     )
 }

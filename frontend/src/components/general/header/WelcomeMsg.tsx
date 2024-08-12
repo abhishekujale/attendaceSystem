@@ -7,7 +7,7 @@ const WelcomeMsg = () => {
             Welcome back 
         </h2>
         <p className="text-sm lg:text-base text-[#89B6FD]">
-            This is your Financial Overview Report
+            This is your Attendance Overview Report
         </p>
         
     </div>

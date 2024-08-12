@@ -52,19 +52,21 @@ const SigninUser = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-1">
-      <div className=" pt-2">Kit logo</div>
+      <div className="flex justify-center items-center">
+        <img src="kitlogo.png" alt=""  className="h-3/4"/>
+      </div>
       <div className="h-full lg:flex flex-col items-center justify-center px-4">
-        <div className="text-center space-y-4 pt-16">
-          <h1 className="font-bold text-3xl text-[#2E2A47]">
-            Welcome back to <span className="text-blue-600">Finance</span>
+        <div className="text-center ">
+          <h1 className="font-bold text-3xl text-[#2E2A47] -mt-10">
+            Welcome  to <span className="text-blue-600">KIT TPO</span>
           </h1>
         </div>
-        <div className="mt-8">
-          <Card>
+        <div>
+          <Card  className="mt-8sssss">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl">Log in to account</CardTitle>
+              <CardTitle className="text-xl">Enter your email below to login</CardTitle>
               <CardDescription>
-                Enter your email below to login 
+                 
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -138,7 +140,7 @@ const SigninUser = () => {
                 </div>
                 <div className="text-center mt-1">
                         <span className="text-sm text-gray-600">
-                            Already have an account? <Link to="/signupuser" className="text-blue-600 hover:underline">Sign Up</Link>
+                            Don't have an account? <Link to="/signupuser" className="text-blue-600 hover:underline">Sign Up</Link>
                         </span>
                 </div>
               </div>

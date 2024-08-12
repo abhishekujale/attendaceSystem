@@ -41,10 +41,6 @@ const Navigation = () => {
     ] : !!admin.id && admin.role === 'superAdmin' ?  
     [
         {
-            href:'/dashboard',
-            label:'Dashboard'
-        },
-        {
             href:'/events',
             label:'Events'
         },
