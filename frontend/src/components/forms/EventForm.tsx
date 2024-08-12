@@ -72,9 +72,10 @@ const EventForm = ({
           throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
         }
         
-        // Convert sheet to JSON with only the specified columns
+        // Convert sheet to JSON with only the specified columns, starting from the second row
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
           header: requiredColumns,
+          range: 1,  // Start from the second row
           raw: false,
         }) as Array<Record<string, string>>;
   

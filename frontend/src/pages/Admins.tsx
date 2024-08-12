@@ -11,7 +11,7 @@ import adminsAtom from "../store/adminsAtom"
 import { Skeleton } from "../components/ui/skeleton"
 import disabledAtom from "../store/disabledAtom"
 import { DataTable } from "@/components/ui/data-table"
-
+ 
 const Admins = () => {
     const [admins,setAdmins] = useRecoilState(adminsAtom)
     const [loading,setLoading] = useState(false)

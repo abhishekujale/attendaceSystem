@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { useSetRecoilState } from 'recoil';
 import { qrDialog } from '@/store/dialogAtom';
+import { useNavigate } from "react-router-dom";
 
 type EventProps = {
     event: Event;
 };
 
 const EventCard = ({ event }: EventProps) => {
+    const navigate = useNavigate()
     const { id, compony, date, round } = event;
     const setQRDialogState = useSetRecoilState(qrDialog)
     const formattedDate = new Intl.DateTimeFormat('en-GB', {
@@ -26,8 +28,8 @@ const EventCard = ({ event }: EventProps) => {
     };
 
     return (
-        <div className="mx-auto w-full">
-            <Card className="border border-gray-200 shadow-sm hover:shadow-md relative rounded-2xl">
+        <div className="mx-auto w-full cursor-pointer" onClick={()=>navigate(`/event/${id}`)}>
+            <Card className="border border-gray-200 shadow-sm hover:shadow-md hover:opacity-50 hover:bg-gray-100 relative rounded-2xl">
                 <p className="absolute right-5 top-5 text-sm text-[#444]">
                     {formattedDate}
                 </p>

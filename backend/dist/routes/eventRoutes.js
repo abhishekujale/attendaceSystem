@@ -120,3 +120,26 @@ router.delete('/:id', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(
         return res.status(500).send({ success: false, message: "Internal server error", error });
     }
 }));
+router.get('/:eventId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { eventId } = req.params;
+        const event = yield dbconfig_1.prisma.event.findUnique({
+            //@ts-ignore
+            where: { id: Number(eventId) },
+            include: {
+                students: true
+            },
+        });
+        if (!event) {
+            return res.status(404).send({ success: false, message: "Event not found" });
+        }
+        return res.status(200).send({
+            success: true,
+            data: event,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send({ success: false, message: "Internal server error", error });
+    }
+}));

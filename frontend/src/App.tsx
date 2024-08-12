@@ -12,6 +12,7 @@ import Events from './pages/Events';
 import SignupUser from './pages/SignupUser';
 import SigninUser from './pages/SigninUser';
 import UserDashboard from './pages/UserDashboard';
+import EventPage from './pages/EventPage';
 
 
 
@@ -22,7 +23,7 @@ function App() {
         <BrowserRouter>
           <ToastContainer />
           <Routes>
-            <Route path="/signin" element={<SignIn/>}></Route>
+            <Route path="/signin" element={<SignIn/>} />
             <Route 
               path="/dashboard" 
               element={<ProtectedRoute roles={['admin','superAdmin']}>
@@ -30,9 +31,9 @@ function App() {
                             <Dashboard/>
                           </Layout>
                         </ProtectedRoute>}
-            >
+            />
               
-            </Route>
+            
             <Route 
                 path="/admins" 
                 element={<ProtectedRoute roles={['superAdmin']}>
@@ -40,8 +41,8 @@ function App() {
                               <Admins/>
                             </Layout>
                           </ProtectedRoute>}
-            >
-            </Route>
+            />
+            
             <Route 
                 path="/events" 
                 element={<ProtectedRoute roles={['admin','superAdmin']}>
@@ -49,18 +50,26 @@ function App() {
                     <Events />
                   </Layout>
                 </ProtectedRoute>}
-            >
-            </Route>
+            />
+            <Route 
+                path="/event/:eventId" 
+                element={<ProtectedRoute roles={['superAdmin']}>
+                  <Layout>
+                    <EventPage />
+                  </Layout>
+                </ProtectedRoute>}
+            />
+            
             <Route 
               path="/signupuser" 
               element={<SignupUser />}
-            >
-            </Route>
+            />
+            
             <Route 
               path="/signinuser" 
               element={<SigninUser />}
-            >
-            </Route>
+            />
+            
             <Route
               path='userdashboard'
               element={
@@ -70,9 +79,7 @@ function App() {
                   </Layout>
                 </ProtectedRoute>
               }
-            >
-
-            </Route>
+            />
           </Routes>
         </BrowserRouter>
       </RecoilRoot>

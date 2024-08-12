@@ -24,7 +24,6 @@ const Navigation = () => {
         navigate(href)
         setOpen(false)
     }
-    console.log(user.role)
     let routes = !!user.id && user.role === 'user' ? [
         {
             href:'/userdashboard',
