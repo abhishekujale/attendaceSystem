@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { authenticatejwt, generateAuthToken, loginValidate, updateValidate } from '../middleware/authMiddleware';
 import { prisma } from '../config/dbconfig';
+import { superAdminMiddleware } from '../middleware/superAdminMiddleware';
+import { adminMiddleware } from '../middleware/adminMiddleware';
 
 const router = require('express').Router();
 
@@ -196,7 +198,7 @@ router.put('/:adminId', authenticatejwt, async (req: Request, res: Response) => 
     }
 });
 
-router.delete('/:adminId', authenticatejwt, async (req: Request, res: Response) => {
+router.delete('/:adminId', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const adminId = req.params.adminId
         
@@ -220,7 +222,7 @@ router.delete('/:adminId', authenticatejwt, async (req: Request, res: Response) 
     }
 });
 
-router.post('/bulkdelete', authenticatejwt, async (req: Request, res: Response) => {
+router.post('/bulkdelete', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const adminIds = req.body.Ids.map((id:string)=>Number(id)); 
 

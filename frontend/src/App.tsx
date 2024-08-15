@@ -5,7 +5,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RecoilRoot } from 'recoil';
 import ProtectedRoute from './components/general/ProtectedRoute';
-import Dashboard from './pages/Dashboard';
 import Layout from './layout/Layout';
 import Admins from './pages/Admins';
 import Events from './pages/Events';
@@ -26,14 +25,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} /> {/* Add the Home route */}
             <Route path="/signin" element={<SignIn />} />
-            <Route 
-              path="/dashboard" 
-              element={<ProtectedRoute roles={['admin','superAdmin']}>
-                          <Layout>
-                            <Dashboard />
-                          </Layout>
-                        </ProtectedRoute>}
-            />
             <Route 
               path="/admins" 
               element={<ProtectedRoute roles={['superAdmin']}>

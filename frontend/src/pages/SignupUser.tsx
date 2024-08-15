@@ -83,7 +83,7 @@ const SignupUser = () => {
                   <span className="w-full border-t" />
                 </div>
               </div>
-              <div className="grid">
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input 
                   id="email" 
@@ -100,7 +100,7 @@ const SignupUser = () => {
                 </div>}
               </div>
 
-              <div className="grid">
+              <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="flex  items-center">
                   <Input 
@@ -132,7 +132,7 @@ const SignupUser = () => {
                 </div>}
               </div>
 
-              <div className="grid ">
+              <div className="grid gap-2">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
                 <div className="flex items-center">
                   <Input 
@@ -143,6 +143,19 @@ const SignupUser = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
                   />
+                  <Button 
+                    variant={'outline'} 
+                    onClick={() => setIsPasswordVisible((t) => !t)}
+                    style={{
+                      aspectRatio: 1,
+                      padding: '0',
+                      borderColor: 'rgb(226 232 240 / 1)',
+                    }}
+                    disabled={isLoading}
+                  >
+                    {isPasswordVisible && <EyeOffIcon color="rgb(226 232 240 / 1)" size={24} />}
+                    {!isPasswordVisible && <EyeIcon color="rgb(226 232 240 / 1)" size={24} />}
+                  </Button>
                 </div>
                 {errors.confirmPassword && <div className="ml-2">
                   <p className="text-sm text-red-400">

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const authMiddleware_1 = require("../middleware/authMiddleware");
+const adminMiddleware_1 = require("../middleware/adminMiddleware");
 const dbconfig_1 = require("../config/dbconfig");
 const zod_1 = require("zod");
 const router = require('express').Router();
@@ -24,7 +25,7 @@ const eventSchema = zod_1.z.object({
     round: zod_1.z.string().min(1, 'Round name is required'),
 });
 // Get all events
-router.get('/', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/', authMiddleware_1.authenticatejwt, adminMiddleware_1.adminMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const events = (yield dbconfig_1.prisma.event.findMany()) || [];
         return res.status(200).send({

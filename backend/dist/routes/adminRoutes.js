@@ -16,6 +16,7 @@ exports.router = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const dbconfig_1 = require("../config/dbconfig");
+const adminMiddleware_1 = require("../middleware/adminMiddleware");
 const router = require('express').Router();
 exports.router = router;
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -179,7 +180,7 @@ router.put('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaite
         return res.status(500).send({ message: "Internal server error", success: false });
     }
 }));
-router.delete('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete('/:adminId', authMiddleware_1.authenticatejwt, adminMiddleware_1.adminMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const adminId = req.params.adminId;
         const deletedAccount = yield dbconfig_1.prisma.admin.delete({
@@ -200,7 +201,7 @@ router.delete('/:adminId', authMiddleware_1.authenticatejwt, (req, res) => __awa
         return res.status(500).send({ message: "Internal server error", success: false });
     }
 }));
-router.post('/bulkdelete', authMiddleware_1.authenticatejwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/bulkdelete', authMiddleware_1.authenticatejwt, adminMiddleware_1.adminMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const adminIds = req.body.Ids.map((id) => Number(id));
         yield dbconfig_1.prisma.admin.deleteMany({

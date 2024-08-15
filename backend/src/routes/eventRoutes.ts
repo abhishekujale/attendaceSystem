@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { authenticatejwt } from '../middleware/authMiddleware';
+import { superAdminMiddleware } from '../middleware/superAdminMiddleware';
+import { adminMiddleware } from '../middleware/adminMiddleware';
 import { prisma } from '../config/dbconfig';
 import { z } from 'zod';
 
@@ -24,7 +26,7 @@ interface StudentChunkData {
 }
 
 // Get all events
-router.get('/', authenticatejwt, async (req: Request, res: Response) => {
+router.get('/', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const events = await prisma.event.findMany() || [];
         return res.status(200).send({
@@ -38,7 +40,7 @@ router.get('/', authenticatejwt, async (req: Request, res: Response) => {
 });
 
 // Create a new event
-router.post('/', authenticatejwt, async (req: Request, res: Response) => {
+router.post('/', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const eventData = eventSchema.parse(req.body);
         const newEvent = await prisma.event.create({
@@ -69,7 +71,7 @@ router.post('/', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-router.post('/upload-chunk/:eventId', authenticatejwt, async (req: Request, res: Response) => {
+router.post('/upload-chunk/:eventId', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
         const { chunkData } :{chunkData:StudentChunkData[]} = req.body;
@@ -104,7 +106,7 @@ router.post('/upload-chunk/:eventId', authenticatejwt, async (req: Request, res:
     }
 });
 
-router.delete('/:id', authenticatejwt, async (req: Request, res: Response) => {
+router.delete('/:id', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const eventId = Number(id);
@@ -128,7 +130,7 @@ router.delete('/:id', authenticatejwt, async (req: Request, res: Response) => {
     }
 });
 
-router.get('/:eventId', authenticatejwt, async (req: Request, res: Response) => {
+router.get('/:eventId', authenticatejwt, adminMiddleware, async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
 
@@ -158,7 +160,7 @@ router.get('/:eventId', authenticatejwt, async (req: Request, res: Response) => 
     }
 });
 
-router.patch('/:id/end', authenticatejwt, async (req: Request, res: Response) => {
+router.patch('/:id/end', authenticatejwt,adminMiddleware, async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const eventId = Number(id);

@@ -35,7 +35,7 @@ const SignIn = () => {
           if (response?.data.success) {
             localStorage.setItem('authToken', response?.data.authToken);
             toast.success(response?.data.message);
-            navigate('/dashboard'); // Navigate after successful login
+            navigate('/events'); // Navigate after successful login
           } else {
             toast.error(response?.data.message);
           }
@@ -135,11 +135,6 @@ const SignIn = () => {
                 >
                   {isLoading ? 'Logging in...' : 'Log in'}
                 </Button>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                </div>
               </div>
             </CardFooter>
           </Card>
