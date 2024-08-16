@@ -39,10 +39,12 @@ model Event {
 model StudentRaw {
   id          Int      @id @default(autoincrement())
   eventId     Int
-  emailId     String   @unique
-  prn         String   @unique
+  emailId     String
+  prn         String
   name        String
   branch      String 
   present     Boolean
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, emailId, prn]) // Composite unique constraint
 }
