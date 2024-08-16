@@ -60,17 +60,25 @@ const EventPage: React.FC = () => {
   }, [eventId]);
 
   const handleDownloadExcel = () => {
-    if (event && event.students) {
+    if (event && event.students && event.students.length > 0) {
+      // Filter and map the student data to include only the required fields
+      const filteredStudents = event.students.map(student => ({
+        name: student.name,
+        branch: student.branch,
+        prn: student.prn,
+        emailId: student.emailId
+      }));
+  
       // Create a new workbook and worksheet
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(event.students);
-
+      const ws = XLSX.utils.json_to_sheet(filteredStudents);
+  
       // Add the worksheet to the workbook
       XLSX.utils.book_append_sheet(wb, ws, "Students");
-
+  
       // Generate a buffer
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
+  
       // Create a Blob from the buffer
       const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       
@@ -80,7 +88,7 @@ const EventPage: React.FC = () => {
       link.href = url;
       link.download = `${event.compony}_${event.round}_students.xlsx`;
       link.click();
-
+  
       // Clean up
       window.URL.revokeObjectURL(url);
     } else {
