@@ -62,7 +62,7 @@ const UserDashboard = () => {
 
   return (
     <div className='flex justify-center w-full '>
-      <div className='flex justify-center items-center w-screen sm:w-96 h-96 sm:h-64  rounded-3xl bg-white text-blue-600 text-9xl -mt-28  border-blue-600 border-4 '>
+      <div className='flex justify-center items-center w-64 sm:w-96 h-64 sm:h-64  rounded-3xl bg-white text-blue-600 text-9xl -mt-28  border-blue-600 border-4 '>
       <button onClick={() => setShowScanner(true)}><MdQrCodeScanner className='static' /></button>
       </div>
       <Dialog open={showScanner} onOpenChange={()=>setShowScanner(false)}>
@@ -81,6 +81,7 @@ const UserDashboard = () => {
             onError={handleError}
             onScan={handleScan}
             style={{ width: '100%' }}
+            facingMode={'rear'}
           />
         </DialogContent>
       </Dialog>

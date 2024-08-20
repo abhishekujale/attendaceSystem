@@ -6,6 +6,7 @@ declare module 'react-qr-scanner' {
       onError?: (error: any) => void;
       onScan?: (data: { text: string } | null) => void;
       style?: React.CSSProperties;
+      facingMode:string
     }
   
     const QrScanner: React.FC<QrScannerProps>;

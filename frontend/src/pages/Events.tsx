@@ -132,6 +132,7 @@ const Events = () => {
                     <Button 
                         className="sm"
                         onClick={OpenNewEventSheet}
+                        disabled={disabled}
                     >
                         <Plus className="size-4 mr-2"/> 
                         Add new event
